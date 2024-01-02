@@ -4,8 +4,11 @@
   </a>
 </p>
 <h1 align="center">
-  Gatsby Minimal TypeScript Starter
+  Lonely With Noise
 </h1>
+
+<p>More updates to readme coming soon...</p>
+<p>Created with Gatsby's Minimal Typescript Starter</p>
 
 ## 🚀 Quick start
 
