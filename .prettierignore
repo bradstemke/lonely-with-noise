@@ -1,0 +1,9 @@
+dist/
+node_modules/
+.astro/
+package-lock.json
+pnpm-lock.yaml
+yarn.lock
+*.mp3
+*.wav
+*.ogg

@@ -1,0 +1,146 @@
+---
+interface Props {
+  title: string;
+  pubDate: Date;
+  description: string;
+  audioFile: string;
+  excerpt?: string;
+  slug: string;
+  category: string;
+}
+
+const { title, pubDate, description, audioFile, excerpt, slug, category } = Astro.props;
+
+const formattedDate = new Intl.DateTimeFormat('en-US', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+}).format(pubDate);
+
+const displayExcerpt = excerpt || description;
+const categoryUrl = `/${category}`;
+const postUrl = `/${category}/${slug}`;
+---
+
+<article class="post-card">
+  <div class="post-card__content">
+    <div class="post-card__meta">
+      <time datetime={pubDate.toISOString()}>{formattedDate}</time>
+      <span class="post-card__separator">•</span>
+      <a href={categoryUrl} class="post-card__category">{category.replace(/-/g, ' ')}</a>
+    </div>
+
+    <h3 class="post-card__title">
+      <a href={postUrl}>{title}</a>
+    </h3>
+
+    <p class="post-card__excerpt">{displayExcerpt}</p>
+
+    <div class="post-card__audio">
+      <audio controls preload="metadata">
+        <source src={audioFile} type="audio/mpeg" />
+        Your browser does not support the audio element.
+      </audio>
+    </div>
+  </div>
+</article>
+
+<style lang="scss">
+  .post-card {
+    background: $bg-secondary;
+    border: 1px solid $border-color;
+    border-radius: $radius-lg;
+    padding: $spacing-lg;
+    transition:
+      border-color $transition-base,
+      transform $transition-base;
+
+    &:hover {
+      border-color: $border-color-hover;
+      transform: translateY(-2px);
+    }
+  }
+
+  .post-card__content {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-md;
+  }
+
+  .post-card__meta {
+    display: flex;
+    align-items: center;
+    gap: $spacing-sm;
+    font-size: $font-size-sm;
+    color: $text-muted;
+
+    time {
+      color: $text-muted;
+    }
+  }
+
+  .post-card__separator {
+    color: $text-muted;
+    opacity: 0.5;
+  }
+
+  .post-card__category {
+    color: $accent-light;
+    text-transform: capitalize;
+    font-weight: $font-weight-medium;
+
+    &:hover {
+      color: $accent;
+    }
+  }
+
+  .post-card__title {
+    margin: 0;
+    font-size: $font-size-xl;
+    line-height: $line-height-tight;
+
+    a {
+      color: $text-primary;
+      transition: color $transition-base;
+
+      &:hover {
+        color: $accent-light;
+      }
+    }
+  }
+
+  .post-card__excerpt {
+    color: $text-secondary;
+    margin: 0;
+    line-height: $line-height-relaxed;
+  }
+
+  .post-card__audio {
+    margin-top: $spacing-sm;
+
+    audio {
+      width: 100%;
+      height: 40px;
+      border-radius: $radius-md;
+
+      &::-webkit-media-controls-panel {
+        background-color: $bg-tertiary;
+      }
+
+      &::-webkit-media-controls-current-time-display,
+      &::-webkit-media-controls-time-remaining-display {
+        color: $text-secondary;
+      }
+    }
+  }
+
+  @media (max-width: $breakpoint-md) {
+    .post-card {
+      padding: $spacing-md;
+    }
+
+    .post-card__title {
+      font-size: $font-size-lg;
+    }
+  }
+</style>

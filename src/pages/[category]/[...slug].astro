@@ -1,0 +1,263 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { getCollection, getEntry } from 'astro:content';
+import { VALID_COLLECTIONS, type CollectionName } from '../../content/config';
+
+export async function getStaticPaths() {
+  const paths = await Promise.all(
+    VALID_COLLECTIONS.map(async (category) => {
+      const entries = await getCollection(category);
+      return entries.map((entry) => ({
+        params: { category, slug: entry.slug },
+        props: { entry, category },
+      }));
+    })
+  );
+
+  return paths.flat();
+}
+
+const { category, slug } = Astro.params;
+const { entry } = Astro.props;
+
+// Validate category
+if (!VALID_COLLECTIONS.includes(category as CollectionName)) {
+  return Astro.redirect('/404');
+}
+
+const { Content } = await entry.render();
+
+const formattedDate = new Intl.DateTimeFormat('en-US', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+}).format(entry.data.pubDate);
+
+const categoryDisplay = category.replace(/-/g, ' ');
+---
+
+<Layout title={`${entry.data.title} - ${categoryDisplay} - Lonely With Noise`}>
+  <main class="post-page">
+    <article class="container">
+      <header class="post-header">
+        <div class="post-meta">
+          <a href={`/${category}`} class="category-tag">{categoryDisplay}</a>
+          <span class="separator">•</span>
+          <time datetime={entry.data.pubDate.toISOString()}>{formattedDate}</time>
+        </div>
+
+        <h1 class="post-title">{entry.data.title}</h1>
+
+        <p class="post-description">{entry.data.description}</p>
+      </header>
+
+      <div class="post-audio">
+        <audio controls preload="metadata">
+          <source src={entry.data.audioFile} type="audio/mpeg" />
+          Your browser does not support the audio element.
+        </audio>
+      </div>
+
+      <div class="post-content">
+        <Content />
+      </div>
+
+      <footer class="post-footer">
+        <a href={`/${category}`} class="back-link">← Back to {categoryDisplay}</a>
+      </footer>
+    </article>
+  </main>
+</Layout>
+
+<style lang="scss">
+  .post-page {
+    min-height: 100vh;
+    padding: $spacing-3xl 0 $spacing-4xl;
+  }
+
+  .post-header {
+    text-align: center;
+    margin-bottom: $spacing-3xl;
+    padding-bottom: $spacing-xl;
+    border-bottom: 1px solid $border-color;
+  }
+
+  .post-meta {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: $spacing-sm;
+    margin-bottom: $spacing-lg;
+    font-size: $font-size-sm;
+  }
+
+  .category-tag {
+    display: inline-block;
+    padding: $spacing-xs $spacing-md;
+    background: rgba($accent, 0.1);
+    color: $accent-light;
+    border-radius: $radius-md;
+    font-weight: $font-weight-medium;
+    text-transform: capitalize;
+    transition: all $transition-base;
+
+    &:hover {
+      background: rgba($accent, 0.2);
+      color: $accent;
+    }
+  }
+
+  .separator {
+    color: $text-muted;
+    opacity: 0.5;
+  }
+
+  time {
+    color: $text-muted;
+  }
+
+  .post-title {
+    font-size: clamp($font-size-2xl, 4vw, $font-size-4xl);
+    margin-bottom: $spacing-md;
+    line-height: $line-height-tight;
+  }
+
+  .post-description {
+    font-size: $font-size-lg;
+    color: $text-secondary;
+    max-width: 800px;
+    margin: 0 auto;
+    line-height: $line-height-relaxed;
+  }
+
+  .post-audio {
+    margin-bottom: $spacing-3xl;
+    padding: $spacing-xl;
+    background: $bg-secondary;
+    border: 1px solid $border-color;
+    border-radius: $radius-lg;
+
+    audio {
+      width: 100%;
+      height: 54px;
+      border-radius: $radius-md;
+
+      &::-webkit-media-controls-panel {
+        background-color: $bg-tertiary;
+      }
+
+      &::-webkit-media-controls-current-time-display,
+      &::-webkit-media-controls-time-remaining-display {
+        color: $text-secondary;
+      }
+    }
+  }
+
+  .post-content {
+    max-width: 800px;
+    margin: 0 auto $spacing-3xl;
+    font-size: $font-size-lg;
+    line-height: $line-height-relaxed;
+
+    :global(h2) {
+      margin-top: $spacing-2xl;
+      margin-bottom: $spacing-lg;
+      font-size: $font-size-2xl;
+    }
+
+    :global(h3) {
+      margin-top: $spacing-xl;
+      margin-bottom: $spacing-md;
+      font-size: $font-size-xl;
+    }
+
+    :global(p) {
+      margin-bottom: $spacing-lg;
+      color: $text-secondary;
+    }
+
+    :global(ul),
+    :global(ol) {
+      margin-bottom: $spacing-lg;
+      padding-left: $spacing-xl;
+      color: $text-secondary;
+    }
+
+    :global(li) {
+      margin-bottom: $spacing-sm;
+    }
+
+    :global(blockquote) {
+      margin: $spacing-xl 0;
+      padding: $spacing-lg $spacing-xl;
+      border-left: 4px solid $accent;
+      background: $bg-secondary;
+      border-radius: $radius-md;
+      font-style: italic;
+      color: $text-secondary;
+    }
+
+    :global(code) {
+      background: $bg-secondary;
+      padding: $spacing-xs $spacing-sm;
+      border-radius: $radius-sm;
+      font-size: 0.9em;
+    }
+
+    :global(pre) {
+      background: $bg-secondary;
+      padding: $spacing-lg;
+      border-radius: $radius-md;
+      overflow-x: auto;
+      margin-bottom: $spacing-lg;
+
+      code {
+        background: none;
+        padding: 0;
+      }
+    }
+  }
+
+  .post-footer {
+    max-width: 800px;
+    margin: 0 auto;
+    padding-top: $spacing-xl;
+    border-top: 1px solid $border-color;
+  }
+
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: $spacing-sm;
+    color: $accent-light;
+    font-weight: $font-weight-medium;
+    text-transform: capitalize;
+    transition: color $transition-base;
+
+    &:hover {
+      color: $accent;
+    }
+  }
+
+  @media (max-width: $breakpoint-md) {
+    .post-page {
+      padding: $spacing-2xl 0 $spacing-3xl;
+    }
+
+    .post-header {
+      margin-bottom: $spacing-2xl;
+    }
+
+    .post-meta {
+      flex-wrap: wrap;
+    }
+
+    .post-audio {
+      padding: $spacing-md;
+    }
+
+    .post-content {
+      font-size: $font-size-base;
+    }
+  }
+</style>

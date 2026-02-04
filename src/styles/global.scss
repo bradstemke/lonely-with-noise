@@ -1,0 +1,79 @@
+@import './variables';
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-family: $font-family-base;
+  background: $bg-primary;
+  color: $text-primary;
+  line-height: $line-height-normal;
+}
+
+body {
+  min-height: 100vh;
+}
+
+a {
+  color: $accent-light;
+  text-decoration: none;
+  transition: color $transition-base;
+
+  &:hover {
+    color: $accent;
+  }
+}
+
+code {
+  font-family: $font-family-mono;
+  background: $bg-secondary;
+  padding: $spacing-xs $spacing-sm;
+  border-radius: $radius-sm;
+  font-size: 0.9em;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  line-height: $line-height-tight;
+  font-weight: $font-weight-bold;
+  margin-bottom: $spacing-md;
+}
+
+h1 {
+  font-size: $font-size-4xl;
+}
+
+h2 {
+  font-size: $font-size-3xl;
+}
+
+h3 {
+  font-size: $font-size-2xl;
+}
+
+p {
+  margin-bottom: $spacing-md;
+  color: $text-secondary;
+}
+
+// Container utility
+.container {
+  max-width: $container-max-width;
+  margin: 0 auto;
+  padding: 0 $container-padding;
+}

@@ -1,86 +1,198 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import Card from '../components/Card.astro';
+import PostCard from '../components/PostCard.astro';
+import { getCollection } from 'astro:content';
+
+// Fetch posts from all collections
+const foundAudio = await getCollection('found-audio');
+const answeringMachineTapes = await getCollection('answering-machine-tapes');
+const fieldRecordings = await getCollection('field-recordings');
+
+// Sort by date and get 2 most recent from each
+const recentFoundAudio = foundAudio
+  .sort((a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime())
+  .slice(0, 2);
+
+const recentTapes = answeringMachineTapes
+  .sort((a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime())
+  .slice(0, 2);
+
+const recentFieldRecordings = fieldRecordings
+  .sort((a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime())
+  .slice(0, 2);
 ---
 
-<Layout title="Welcome to Astro.">
-	<main>
-		<h1>Welcome to <span class="text-gradient">Astro</span></h1>
-		<p class="instructions">
-			To get started, open the directory <code>src/pages</code> in your project.<br />
-			<strong>Code Challenge:</strong> Tweak the "Welcome to Astro" message above.
-		</p>
-		<ul role="list" class="link-card-grid">
-			<Card
-				href="https://docs.astro.build/"
-				title="Documentation"
-				body="Find in-depth guides and reference material for building with Astro."
-			/>
-			<Card
-				href="https://astro.build/integrations/"
-				title="Integrations"
-				body="Supercharge your project with new frameworks and libraries."
-			/>
-			<Card
-				href="https://astro.build/themes/"
-				title="Themes"
-				body="Explore a galaxy of community-built starter themes."
-			/>
-			<Card
-				href="https://astro.build/chat/"
-				title="Community"
-				body="Come say hi to our amazing Discord community."
-			/>
-		</ul>
-	</main>
+<Layout title="Lonely With Noise - Found Audio, Tapes & Field Recordings">
+  <main class="home">
+    <section class="hero">
+      <div class="container">
+        <h1 class="hero__title">Lonely With Noise</h1>
+        <p class="hero__description">
+          A collection of found sounds, forgotten voices, and ambient recordings. Each piece
+          captures a moment in time—some intentional, some accidental, all worth listening to.
+        </p>
+      </div>
+    </section>
+
+    <section class="category-section">
+      <div class="container">
+        <div class="category-header">
+          <h2>Found Audio</h2>
+          <a href="/found-audio" class="view-all">View all →</a>
+        </div>
+        <div class="posts-grid">
+          {
+            recentFoundAudio.map((post) => (
+              <PostCard
+                title={post.data.title}
+                pubDate={post.data.pubDate}
+                description={post.data.description}
+                audioFile={post.data.audioFile}
+                excerpt={post.data.excerpt}
+                slug={post.slug}
+                category="found-audio"
+              />
+            ))
+          }
+        </div>
+      </div>
+    </section>
+
+    <section class="category-section">
+      <div class="container">
+        <div class="category-header">
+          <h2>Answering Machine Tapes</h2>
+          <a href="/answering-machine-tapes" class="view-all">View all →</a>
+        </div>
+        <div class="posts-grid">
+          {
+            recentTapes.map((post) => (
+              <PostCard
+                title={post.data.title}
+                pubDate={post.data.pubDate}
+                description={post.data.description}
+                audioFile={post.data.audioFile}
+                excerpt={post.data.excerpt}
+                slug={post.slug}
+                category="answering-machine-tapes"
+              />
+            ))
+          }
+        </div>
+      </div>
+    </section>
+
+    <section class="category-section">
+      <div class="container">
+        <div class="category-header">
+          <h2>Field Recordings</h2>
+          <a href="/field-recordings" class="view-all">View all →</a>
+        </div>
+        <div class="posts-grid">
+          {
+            recentFieldRecordings.map((post) => (
+              <PostCard
+                title={post.data.title}
+                pubDate={post.data.pubDate}
+                description={post.data.description}
+                audioFile={post.data.audioFile}
+                excerpt={post.data.excerpt}
+                slug={post.slug}
+                category="field-recordings"
+              />
+            ))
+          }
+        </div>
+      </div>
+    </section>
+  </main>
 </Layout>
 
-<style>
-	main {
-		margin: auto;
-		padding: 1rem;
-		width: 800px;
-		max-width: calc(100% - 2rem);
-		color: white;
-		font-size: 20px;
-		line-height: 1.6;
-	}
-	h1 {
-		font-size: 4rem;
-		font-weight: 700;
-		line-height: 1;
-		text-align: center;
-		margin-bottom: 1em;
-	}
-	.text-gradient {
-		background-image: var(--accent-gradient);
-		-webkit-background-clip: text;
-		-webkit-text-fill-color: transparent;
-		background-size: 400%;
-		background-position: 0%;
-	}
-	.instructions {
-		margin-bottom: 2rem;
-		border: 1px solid rgba(var(--accent-light), 25%);
-		background: linear-gradient(rgba(var(--accent-dark), 66%), rgba(var(--accent-dark), 33%));
-		padding: 1.5rem;
-		border-radius: 8px;
-	}
-	.instructions code {
-		font-size: 0.8em;
-		font-weight: bold;
-		background: rgba(var(--accent-light), 12%);
-		color: rgb(var(--accent-light));
-		border-radius: 4px;
-		padding: 0.3em 0.4em;
-	}
-	.instructions strong {
-		color: rgb(var(--accent-light));
-	}
-	.link-card-grid {
-		display: grid;
-		grid-template-columns: repeat(auto-fit, minmax(24ch, 1fr));
-		gap: 2rem;
-		padding: 0;
-	}
+<style lang="scss">
+  .home {
+    min-height: 100vh;
+    padding-bottom: $spacing-4xl;
+  }
+
+  .hero {
+    padding: $spacing-4xl 0 $spacing-3xl;
+    text-align: center;
+    border-bottom: 1px solid $border-color;
+    margin-bottom: $spacing-3xl;
+  }
+
+  .hero__title {
+    font-size: clamp($font-size-3xl, 5vw, $font-size-4xl);
+    margin-bottom: $spacing-lg;
+    background: $accent-gradient;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .hero__description {
+    font-size: $font-size-lg;
+    color: $text-secondary;
+    max-width: 700px;
+    margin: 0 auto;
+    line-height: $line-height-relaxed;
+  }
+
+  .category-section {
+    margin-bottom: $spacing-4xl;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  .category-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: $spacing-xl;
+
+    h2 {
+      font-size: $font-size-2xl;
+      margin: 0;
+      text-transform: capitalize;
+    }
+  }
+
+  .view-all {
+    color: $accent-light;
+    font-size: $font-size-base;
+    font-weight: $font-weight-medium;
+    transition: color $transition-base;
+
+    &:hover {
+      color: $accent;
+    }
+  }
+
+  .posts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 500px), 1fr));
+    gap: $spacing-xl;
+  }
+
+  @media (max-width: $breakpoint-md) {
+    .hero {
+      padding: $spacing-3xl 0 $spacing-2xl;
+    }
+
+    .category-section {
+      margin-bottom: $spacing-3xl;
+    }
+
+    .category-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: $spacing-sm;
+    }
+
+    .posts-grid {
+      gap: $spacing-lg;
+    }
+  }
 </style>

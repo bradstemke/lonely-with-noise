@@ -1,0 +1,112 @@
+---
+const currentYear = new Date().getFullYear();
+---
+
+<footer class="footer">
+  <div class="container">
+    <div class="footer__content">
+      <div class="footer__brand">
+        <h3>Lonely With Noise</h3>
+        <p>Preserving moments through sound</p>
+      </div>
+
+      <nav class="footer__nav">
+        <h4>Categories</h4>
+        <ul>
+          <li><a href="/found-audio">Found Audio</a></li>
+          <li>
+            <a href="/answering-machine-tapes">Answering Machine Tapes</a>
+          </li>
+          <li><a href="/field-recordings">Field Recordings</a></li>
+        </ul>
+      </nav>
+
+      <div class="footer__info">
+        <p>&copy; {currentYear} Lonely With Noise</p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<style lang="scss">
+  .footer {
+    background: $bg-secondary;
+    border-top: 1px solid $border-color;
+    padding: $spacing-3xl 0 $spacing-xl;
+    margin-top: $spacing-4xl;
+  }
+
+  .footer__content {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    gap: $spacing-3xl;
+  }
+
+  .footer__brand {
+    h3 {
+      font-size: $font-size-xl;
+      margin-bottom: $spacing-sm;
+      background: $accent-gradient;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    p {
+      color: $text-muted;
+      margin: 0;
+    }
+  }
+
+  .footer__nav {
+    h4 {
+      font-size: $font-size-base;
+      font-weight: $font-weight-semibold;
+      margin-bottom: $spacing-md;
+      color: $text-primary;
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    li {
+      margin-bottom: $spacing-sm;
+    }
+
+    a {
+      color: $text-secondary;
+      text-transform: capitalize;
+      transition: color $transition-base;
+
+      &:hover {
+        color: $accent-light;
+      }
+    }
+  }
+
+  .footer__info {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+
+    p {
+      color: $text-muted;
+      font-size: $font-size-sm;
+      margin: 0;
+    }
+  }
+
+  @media (max-width: $breakpoint-md) {
+    .footer__content {
+      grid-template-columns: 1fr;
+      gap: $spacing-xl;
+    }
+
+    .footer__info {
+      justify-content: flex-start;
+    }
+  }
+</style>
